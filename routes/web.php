@@ -11,6 +11,7 @@ use App\Http\Controllers\web\UserManagementController;
 use App\Http\Controllers\web\UserRoleManagementController;
 use App\Http\Controllers\web\ApprovalFlowController;
 use App\Http\Controllers\web\ApprovalFlowStepController;
+use App\Http\Controllers\web\TicketTypeFieldController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -78,3 +79,9 @@ Route::get('/setting/approval-flows/{flowId}/steps', [ApprovalFlowStepController
 Route::get('/setting/approval-flows/{flowId}/steps/create', [ApprovalFlowStepController::class, 'create'])->name('setting.approval_flow_steps.create');
 Route::get('/setting/approval-flows/{flowId}/steps/edit/{id}', [ApprovalFlowStepController::class, 'edit'])->name('setting.approval_flow_steps.edit');
 Route::get('/setting/approval-flows/{flowId}/steps/detail/{id}', [ApprovalFlowStepController::class, 'detail'])->name('setting.approval_flow_steps.detail');
+
+// Ticket type fields
+Route::get('/tickets/type-fields', [TicketTypeFieldController::class, 'index'])->name('tickets.type_fields.index');
+Route::get('/tickets/type-fields/create', [TicketTypeFieldController::class, 'create'])->name('tickets.type_fields.create');
+Route::get('/tickets/type-fields/edit/{id}', [TicketTypeFieldController::class, 'edit'])->name('tickets.type_fields.edit');
+Route::get('/tickets/type-fields/detail/{id}', [TicketTypeFieldController::class, 'detail'])->name('tickets.type_fields.detail');

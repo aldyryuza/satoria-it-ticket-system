@@ -10,6 +10,7 @@ use App\Http\Controllers\api\UserManagementController;
 use App\Http\Controllers\api\UserRoleManagementController;
 use App\Http\Controllers\api\ApprovalFlowController;
 use App\Http\Controllers\api\ApprovalFlowStepController;
+use App\Http\Controllers\api\TicketTypeFieldController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -63,6 +64,11 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::post('/setting/approval-flows/{flowId}/steps/getData', [ApprovalFlowStepController::class, 'getData']);
     Route::post('/setting/approval-flows/steps/submit', [ApprovalFlowStepController::class, 'submit']);
     Route::delete('/setting/approval-flows/steps/delete/{id}', [ApprovalFlowStepController::class, 'delete']);
+
+    // TICKET TYPE FIELDS
+    Route::post('/tickets/type-fields/getData', [TicketTypeFieldController::class, 'getData']);
+    Route::post('/tickets/type-fields/submit', [TicketTypeFieldController::class, 'submit']);
+    Route::delete('/tickets/type-fields/delete/{id}', [TicketTypeFieldController::class, 'delete']);
 });
 
 

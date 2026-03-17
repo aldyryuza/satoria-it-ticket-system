@@ -12,7 +12,6 @@ class ApprovalFlowSeeder extends Seeder
         DB::table('approval_flows')->insert([
 
             [
-                'id' => 1,
                 'company_id' => 2,
                 'division_id' => 1,
                 'flow_name' => 'Sales Pharma Approval',
@@ -20,7 +19,6 @@ class ApprovalFlowSeeder extends Seeder
             ],
 
             [
-                'id' => 2,
                 'company_id' => 3,
                 'division_id' => 3,
                 'flow_name' => 'Sales Distribusi Approval',

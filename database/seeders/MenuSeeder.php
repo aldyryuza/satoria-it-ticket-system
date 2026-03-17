@@ -12,7 +12,6 @@ class MenuSeeder extends Seeder
 
         DB::table('menus')->insert([
             [
-                'id' => 1,
                 'menu_name' => 'Dashboard',
                 'slug' => 'dashboard',
                 'route' => 'dashboard',
@@ -21,7 +20,6 @@ class MenuSeeder extends Seeder
                 'order_number' => 1
             ],
             [
-                'id' => 2,
                 'menu_name' => 'Ticket Management',
                 'slug' => null,
                 'route' => null,
@@ -30,7 +28,6 @@ class MenuSeeder extends Seeder
                 'order_number' => 2
             ],
             [
-                'id' => 3,
                 'menu_name' => 'Create Ticket',
                 'slug' => 'create_tickets',
                 'route' => 'tickets/create',
@@ -39,7 +36,6 @@ class MenuSeeder extends Seeder
                 'order_number' => 1
             ],
             [
-                'id' => 4,
                 'menu_name' => 'My Tickets',
                 'slug' => 'my_tickets',
                 'route' => 'tickets/my',
@@ -48,7 +44,6 @@ class MenuSeeder extends Seeder
                 'order_number' => 2
             ],
             [
-                'id' => 5,
                 'menu_name' => 'Approval Tickets',
                 'slug' => 'approval_tickets',
                 'route' => 'tickets/approval',
@@ -57,7 +52,6 @@ class MenuSeeder extends Seeder
                 'order_number' => 3
             ],
             [
-                'id' => 6,
                 'menu_name' => 'All Tickets',
                 'slug' => 'all_tickets',
                 'route' => 'tickets',
@@ -66,7 +60,6 @@ class MenuSeeder extends Seeder
                 'order_number' => 4
             ],
             [
-                'id' => 7,
                 'menu_name' => 'User Management',
                 'slug' => 'user_management',
                 'route' => 'users',
@@ -75,16 +68,14 @@ class MenuSeeder extends Seeder
                 'order_number' => 3
             ],
             [
-                'id' => 8,
-                'menu_name' => 'Role Management',
-                'slug' => ' role_management',
-                'route' => 'roles',
+                'menu_name' => 'Role Permission',
+                'slug' => ' roles_permission',
+                'route' => 'roles-permission',
                 'parent_id' => null,
                 'icon' => 'shield',
                 'order_number' => 4
             ],
             [
-                'id' => 9,
                 'menu_name' => 'Reports',
                 'slug' => 'reports_index',
                 'route' => 'reports',
@@ -93,7 +84,6 @@ class MenuSeeder extends Seeder
                 'order_number' => 5
             ],
             [
-                'id' => 10,
                 'menu_name' => 'Master',
                 'slug' => null,
                 'route' => null,
@@ -102,13 +92,77 @@ class MenuSeeder extends Seeder
                 'order_number' => 6
             ],
             [
-                'id' => 11,
                 'menu_name' => 'Menu',
                 'slug' => 'master_menu',
                 'route' => '/master/menu',
                 'parent_id' => 10,
                 'icon' => null,
                 'order_number' => 1
+            ],
+            [
+                'menu_name' => 'Departemen',
+                'slug' => 'master_departemen',
+                'route' => '/master/departemen',
+                'parent_id' => 10,
+                'icon' => null,
+                'order_number' => 2
+            ],
+            [
+                'menu_name' => 'Subsidiary',
+                'slug' => 'master_subsidiary',
+                'route' => '/master/subsidiary',
+                'parent_id' => 10,
+                'icon' => null,
+                'order_number' => 3
+            ],
+            [
+                'menu_name' => 'Roles',
+                'slug' => 'master_roles',
+                'route' => '/master/roles',
+                'parent_id' => 10,
+                'icon' => null,
+                'order_number' => 4
+            ],
+            [
+                'menu_name' => 'Users',
+                'slug' => 'master_users',
+                'route' => '/users',
+                'parent_id' => 10,
+                'icon' => null,
+                'order_number' => 5
+            ],
+            [
+                'menu_name' => 'User Roles',
+                'slug' => 'master_user_roles',
+                'route' => '/master/user-roles',
+                'parent_id' => 10,
+                'icon' => null,
+                'order_number' => 6
+            ],
+            // setting/approval-flows
+            [
+                'menu_name' => 'Settings',
+                'slug' => 'setting_approval_flows',
+                'route' => '/setting/approval-flows',
+                'parent_id' => null,
+                'icon' => 'cog',
+                'order_number' => 7
+            ],
+            [
+                'menu_name' => 'Approval Flows',
+                'slug' => 'setting_approval_flows',
+                'route' => '/setting/approval-flows',
+                'parent_id' => 17,
+                'icon' => null,
+                'order_number' => 1
+            ],
+            [
+                'menu_name' => 'Approval Flow Steps',
+                'slug' => 'setting_approval_flow_steps',
+                'route' => '/setting/approval-flow-steps',
+                'parent_id' => 17,
+                'icon' => null,
+                'order_number' => 2
             ],
         ]);
     }

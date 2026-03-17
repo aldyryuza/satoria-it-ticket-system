@@ -13,7 +13,6 @@ class UserSeeder extends Seeder
         DB::table('users')->insert([
 
             [
-                'id' => 1,
                 'company_id' => 1,
                 'division_id' => 4,
                 'name' => 'Super Admin',
@@ -25,7 +24,6 @@ class UserSeeder extends Seeder
             ],
 
             [
-                'id' => 2,
                 'company_id' => 1,
                 'division_id' => 4,
                 'name' => 'IT Admin',
@@ -37,7 +35,6 @@ class UserSeeder extends Seeder
             ],
 
             [
-                'id' => 3,
                 'company_id' => 1,
                 'division_id' => 4,
                 'name' => 'IT Worker',
@@ -49,7 +46,6 @@ class UserSeeder extends Seeder
             ],
 
             [
-                'id' => 4,
                 'company_id' => 2,
                 'division_id' => 1,
                 'name' => 'Head Sales Pharma',
@@ -61,7 +57,6 @@ class UserSeeder extends Seeder
             ],
 
             [
-                'id' => 5,
                 'company_id' => 2,
                 'division_id' => 1,
                 'name' => 'Sales Staff',
