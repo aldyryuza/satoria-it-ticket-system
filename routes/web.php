@@ -16,6 +16,7 @@ use App\Http\Controllers\web\TicketController;
 use App\Http\Controllers\web\ApprovalController;
 use App\Http\Controllers\web\AdminController;
 use App\Http\Controllers\web\WorkerController;
+use App\Http\Controllers\web\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -29,6 +30,9 @@ Route::get('/auth/register', [AuthController::class, 'register'])->name('auth.re
 Route::post('/auth/save_session', [AuthController::class, 'save_session'])->name('auth.save_session');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+Route::post('/profile/switch-role', [ProfileController::class, 'switchRole'])->name('profile.switch_role');
 
 // MENU
 Route::get('/master/menu', [MenuController::class, 'index'])->name('master.menu.index');

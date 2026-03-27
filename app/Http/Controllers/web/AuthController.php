@@ -131,6 +131,7 @@ class AuthController extends Controller
         Session::put('id', $user->id);
         Session::put('name', $user->name);
         Session::put('username', $user->username);
+        Session::put('email', $user->email ?? null);
 
         // COMPANY
         if (isset($user->company)) {
@@ -148,9 +149,11 @@ class AuthController extends Controller
         // ROLE
         Session::put('roles_id', $selectedRole->id ?? null);
         Session::put('role_name', $selectedRole->role_name ?? '');
+        Session::put('user_roles', isset($user->roles) ? $user->roles : []);
 
         // PERMISSION
         Session::put('permissions', $permissions);
+        Cache::forget('menu_user_' . $user->id);
 
         return response()->json(['is_valid' => true]);
     }

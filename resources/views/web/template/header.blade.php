@@ -82,7 +82,7 @@
                         <div class="dropdown-divider my-1"></div>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="pages-profile-user.html"> <i
+                        <a class="dropdown-item" href="{{ route('profile.index') }}"> <i
                                 class="icon-base bx bx-user icon-md me-3"></i><span>My Profile</span>
                         </a>
                     </li>
