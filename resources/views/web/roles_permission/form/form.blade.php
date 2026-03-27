@@ -12,11 +12,12 @@
                     <div class="col-sm-12 col-md-6">
                         <div class="mb-3">
                             <label for="role_id" class="form-label">Role</label>
-                            <select id="role_id" class="form-control required" error="Role">
+                            <select id="role_id" class="form-control select2 required" error="Role">
                                 <option value="">Pilih Role</option>
                                 @foreach ($roles as $role)
-                                <option value="{{ $role->id }}" {{ isset($data->role_id) && $data->role_id == $role->id
-                                    ? 'selected' : '' }}>{{ $role->role_name }}</option>
+                                    <option value="{{ $role->id }}"
+                                        {{ isset($data->role_id) && $data->role_id == $role->id ? 'selected' : '' }}>
+                                        {{ $role->role_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -24,11 +25,12 @@
                     <div class="col-sm-12 col-md-6">
                         <div class="mb-3">
                             <label for="menu_id" class="form-label">Menu</label>
-                            <select id="menu_id" class="form-control required" error="Menu">
+                            <select id="menu_id" class="form-control select2 required" error="Menu">
                                 <option value="">Pilih Menu</option>
                                 @foreach ($menus as $menu)
-                                <option value="{{ $menu->id }}" {{ isset($data->menu_id) && $data->menu_id == $menu->id
-                                    ? 'selected' : '' }}>{{ $menu->menu_name }}</option>
+                                    <option value="{{ $menu->id }}"
+                                        {{ isset($data->menu_id) && $data->menu_id == $menu->id ? 'selected' : '' }}>
+                                        {{ $menu->menu_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -46,36 +48,36 @@
                         <div class="row">
                             <div class="col-sm-6 col-md-2 mb-3">
                                 <div class="form-check">
-                                    <input class="form-check-input check-permission" type="checkbox" id="can_view" {{
-                                        isset($data->can_view) && $data->can_view ? 'checked' : '' }}>
+                                    <input class="form-check-input check-permission" type="checkbox" id="can_view"
+                                        {{ isset($data->can_view) && $data->can_view ? 'checked' : '' }}>
                                     <label class="form-check-label" for="can_view">Can View</label>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-2 mb-3">
                                 <div class="form-check">
-                                    <input class="form-check-input check-permission" type="checkbox" id="can_create" {{
-                                        isset($data->can_create) && $data->can_create ? 'checked' : '' }}>
+                                    <input class="form-check-input check-permission" type="checkbox" id="can_create"
+                                        {{ isset($data->can_create) && $data->can_create ? 'checked' : '' }}>
                                     <label class="form-check-label" for="can_create">Can Create</label>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-2 mb-3">
                                 <div class="form-check">
-                                    <input class="form-check-input check-permission" type="checkbox" id="can_update" {{
-                                        isset($data->can_update) && $data->can_update ? 'checked' : '' }}>
+                                    <input class="form-check-input check-permission" type="checkbox" id="can_update"
+                                        {{ isset($data->can_update) && $data->can_update ? 'checked' : '' }}>
                                     <label class="form-check-label" for="can_update">Can Update</label>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-2 mb-3">
                                 <div class="form-check">
-                                    <input class="form-check-input check-permission" type="checkbox" id="can_delete" {{
-                                        isset($data->can_delete) && $data->can_delete ? 'checked' : '' }}>
+                                    <input class="form-check-input check-permission" type="checkbox" id="can_delete"
+                                        {{ isset($data->can_delete) && $data->can_delete ? 'checked' : '' }}>
                                     <label class="form-check-label" for="can_delete">Can Delete</label>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-2 mb-3">
                                 <div class="form-check">
-                                    <input class="form-check-input check-permission" type="checkbox" id="can_print" {{
-                                        isset($data->can_print) && $data->can_print ? 'checked' : '' }}>
+                                    <input class="form-check-input check-permission" type="checkbox" id="can_print"
+                                        {{ isset($data->can_print) && $data->can_print ? 'checked' : '' }}>
                                     <label class="form-check-label" for="can_print">Can Print</label>
                                 </div>
                             </div>
@@ -85,7 +87,7 @@
             </div>
             <div class="p-3 border-top text-end">
                 @if ($data_page['action'] != 'detail')
-                <button type="button" class="btn btn-primary" onclick="RolePermission.submit()">Save</button>
+                    <button type="button" class="btn btn-primary" onclick="RolePermission.submit()">Save</button>
                 @endif
                 <button type="button" class="btn bg-danger-subtle text-danger ms-6 px-4"
                     onclick="RolePermission.back()">Cancel</button>

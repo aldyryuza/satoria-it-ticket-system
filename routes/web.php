@@ -12,6 +12,10 @@ use App\Http\Controllers\web\UserRoleManagementController;
 use App\Http\Controllers\web\ApprovalFlowController;
 use App\Http\Controllers\web\ApprovalFlowStepController;
 use App\Http\Controllers\web\TicketTypeFieldController;
+use App\Http\Controllers\web\TicketController;
+use App\Http\Controllers\web\ApprovalController;
+use App\Http\Controllers\web\AdminController;
+use App\Http\Controllers\web\WorkerController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -85,3 +89,38 @@ Route::get('/tickets/type-fields', [TicketTypeFieldController::class, 'index'])-
 Route::get('/tickets/type-fields/create', [TicketTypeFieldController::class, 'create'])->name('tickets.type_fields.create');
 Route::get('/tickets/type-fields/edit/{id}', [TicketTypeFieldController::class, 'edit'])->name('tickets.type_fields.edit');
 Route::get('/tickets/type-fields/detail/{id}', [TicketTypeFieldController::class, 'detail'])->name('tickets.type_fields.detail');
+
+// Tickets
+Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
+Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
+Route::get('/tickets/history', [TicketController::class, 'history'])->name('tickets.history');
+Route::get('/tickets/approval', [ApprovalController::class, 'index'])->name('tickets.approval');
+Route::get('/tickets/all', [AdminController::class, 'allTickets'])->name('admin.tickets');
+Route::post('/tickets/{id}/submit-for-approval', [TicketController::class, 'submitForApproval'])->name('tickets.submit_for_approval');
+Route::get('/tickets/{id}', [TicketController::class, 'show'])
+    ->where('id', '[0-9]+')->name('tickets.show');
+Route::get('/tickets/{id}/edit', [TicketController::class, 'edit'])->name('tickets.edit');
+Route::put('/tickets/{id}', [TicketController::class, 'update'])->name('tickets.update');
+Route::delete('/tickets/delete/{id}', [TicketController::class, 'destroy'])->name('tickets.delete');
+Route::get('/tickets/history', [TicketController::class, 'history'])->name('tickets.history');
+
+// Approval
+Route::post('/approval/approve/{id}', [ApprovalController::class, 'approve'])->name('approval.approve');
+Route::post('/approval/reject/{id}', [ApprovalController::class, 'reject'])->name('approval.reject');
+
+// Admin
+Route::get('/admin/waiting-assignment', [AdminController::class, 'waitingAssignment'])->name('admin.waiting_assignment');
+Route::get('/admin/in-progress', [AdminController::class, 'inProgress'])->name('admin.in_progress');
+Route::get('/admin/done', [AdminController::class, 'done'])->name('admin.done');
+Route::get('/admin/closed', [AdminController::class, 'closed'])->name('admin.closed');
+Route::get('/admin/assign/{id}', [AdminController::class, 'assign'])->name('admin.assign.view');
+Route::post('/admin/assign/{id}', [AdminController::class, 'assign'])->name('admin.assign');
+Route::get('/admin/close/{id}', [AdminController::class, 'close'])->name('admin.close');
+Route::get('/admin/worker-management', [AdminController::class, 'workerManagement'])->name('admin.worker_management');
+
+// Worker
+Route::get('/tickets/my', [WorkerController::class, 'myTickets'])->name('worker.my_tickets');
+Route::post('/worker/start-work/{id}', [WorkerController::class, 'startWork'])->name('worker.start_work');
+Route::post('/worker/mark-done/{id}', [WorkerController::class, 'markDone'])->name('worker.mark_done');
+Route::post('/worker/update-progress/{id}', [WorkerController::class, 'updateProgress'])->name('worker.update_progress');
+Route::get('/worker/ticket-history/{id}', [WorkerController::class, 'ticketHistory'])->name('worker.history');

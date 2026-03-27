@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\web;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cache;
 
@@ -67,6 +69,18 @@ class AuthController extends Controller
         if (!$user) {
             return response()->json(['is_valid' => false, 'message' => 'User data tidak valid'], 400);
         }
+        // ambil user dari DB (WAJIB)
+        $authUser = User::find($user->id);
+
+        if (!$authUser) {
+            return response()->json([
+                'is_valid' => false,
+                'message' => 'User tidak ditemukan di database'
+            ], 404);
+        }
+
+        // login ke guard web
+        Auth::login($authUser);
 
         $selectedRoleId = $request->input('role_id');
         $selectedRole = null;

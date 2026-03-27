@@ -115,4 +115,8 @@ $(function () {
     if ($('#data-table').length) {
         UserRoleManagement.getData();
     }
+
+    if ($('.select2').length) {
+        $('.select2').select2();
+    }
 });

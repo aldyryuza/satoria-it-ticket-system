@@ -20,4 +20,14 @@ class TicketHistory extends Model
         'old_value' => 'array',
         'new_value' => 'array'
     ];
+
+    public function ticket()
+    {
+        return $this->belongsTo(TicketRequest::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -7,6 +7,8 @@
 <head>
     <meta charset="utf-8" />
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
@@ -186,7 +188,11 @@
     <script src="{{ asset('assets/utils/url.js') }}"></script>
     <script src="{{ asset('assets/utils/message.js') }}"></script>
     <script src="{{ asset('assets/utils/validation.js') }}"></script>
-    {{-- <script src="{{ asset('assets/js/utils/toastnew.js') }}"></script> --}}
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="{{ asset('assets/utils/template.js') }}"></script>
 
 
@@ -244,6 +250,9 @@
     @endif
     @endforeach
     @endif
+
+
+    @yield('scripts')
 </body>
 
 </html>

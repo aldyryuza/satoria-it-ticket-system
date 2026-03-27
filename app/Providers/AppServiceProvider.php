@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Blade;
+use App\Models\ApprovalFlow;
 use App\Services\MenuService;
 
 class AppServiceProvider extends ServiceProvider
@@ -69,5 +70,21 @@ class AppServiceProvider extends ServiceProvider
             }
             $view->with('breadcrumbs', $breadcrumbs);
         });
+    }
+
+    public static function getFirstApprover($companyId, $divisionId)
+    {
+        $flow = ApprovalFlow::where('company_id', $companyId)
+            ->where('division_id', $divisionId)
+            ->where('is_active', true)
+            ->first();
+        if ($flow) {
+            $step = $flow->steps()->orderBy('step_order')->first();
+            if ($step) {
+                return $step->approver_user_id;
+            }
+        }
+
+        return null;
     }
 }

@@ -16,7 +16,8 @@ return new class extends Migration
             $table->integer('ticket_id');
             $table->string('field_name');
             $table->string('field_value');
-
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
         });
     }

@@ -124,4 +124,6 @@ $(function () {
     if ($('#data-table').length) {
         UserManagement.getData();
     }
+
+    $('.select2').select2();
 });

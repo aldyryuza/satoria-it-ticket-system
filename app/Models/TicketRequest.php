@@ -70,4 +70,14 @@ class TicketRequest extends BaseModel
     {
         return $this->hasMany(TicketHistory::class, 'ticket_id');
     }
+
+    public function fields()
+    {
+        return $this->hasMany(TicketField::class, 'ticket_id');
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(TicketAssignment::class, 'ticket_id');
+    }
 }

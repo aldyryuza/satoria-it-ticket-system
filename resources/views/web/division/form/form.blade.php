@@ -11,11 +11,12 @@
                     <input type="hidden" id="id" value="{{ $data['id'] ?? '' }}" />
                     <div class="col-sm-12 col-md-6 mb-3">
                         <label for="company_id" class="form-label">Company</label>
-                        <select id="company_id" class="form-control required" error="Company">
+                        <select id="company_id" class="form-control select2 required" error="Company">
                             <option value="">Pilih Company</option>
                             @foreach ($companies as $company)
-                            <option value="{{ $company->id }}" {{ isset($data->company_id) && $data->company_id ==
-                                $company->id ? 'selected' : '' }}>{{ $company->company_name }}</option>
+                                <option value="{{ $company->id }}"
+                                    {{ isset($data->company_id) && $data->company_id == $company->id ? 'selected' : '' }}>
+                                    {{ $company->company_name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -26,11 +27,12 @@
                     </div>
                     <div class="col-sm-12 col-md-6 mb-3">
                         <label for="head_user_id" class="form-label">Head User</label>
-                        <select id="head_user_id" class="form-control">
+                        <select id="head_user_id" class="form-control select2">
                             <option value="">Pilih Head User (opsional)</option>
                             @foreach ($users as $user)
-                            <option value="{{ $user->id }}" {{ isset($data->head_user_id) && $data->head_user_id ==
-                                $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
+                                <option value="{{ $user->id }}"
+                                    {{ isset($data->head_user_id) && $data->head_user_id == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -38,7 +40,7 @@
             </div>
             <div class="p-3 border-top text-end">
                 @if ($data_page['action'] != 'detail')
-                <button class="btn btn-primary" type="button" onclick="Division.submit()">Save</button>
+                    <button class="btn btn-primary" type="button" onclick="Division.submit()">Save</button>
                 @endif
                 <button class="btn bg-danger-subtle text-danger ms-6 px-4" type="button"
                     onclick="Division.back()">Cancel</button>
