@@ -92,7 +92,7 @@
                         <select name="assigned_to" class="form-select" required>
                             <option value="">Select Worker</option>
                             @foreach (\App\Models\User::whereHas('roles', function ($q) {
-        $q->where('name', 'IT Worker');
+        $q->where('role_name', 'it_worker');
     })->get() as $worker)
                                 <option value="{{ $worker->id }}">{{ $worker->name }}</option>
                             @endforeach

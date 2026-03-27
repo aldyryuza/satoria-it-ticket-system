@@ -46,7 +46,7 @@
                                     <input type="text" class="form-control" value="{{ session('company_name') }}"
                                         readonly style="background-color:#e9ecef; cursor:not-allowed;">
                                 @else
-                                    <select name="company_id" class="form-control" required>
+                                    <select name="company_id" class="form-control select2" required>
                                         <option value="">Select Company</option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->id }}"
@@ -67,7 +67,7 @@
                                     <input type="text" class="form-control" value="{{ session('division_name') }}"
                                         readonly style="background-color:#e9ecef; cursor:not-allowed;">
                                 @else
-                                    <select name="division_id" class="form-control" required>
+                                    <select name="division_id" class="form-control select2" required>
                                         <option value="">Select Division</option>
                                         @foreach ($divisions as $division)
                                             <option value="{{ $division->id }}"
@@ -92,7 +92,7 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label>Request Type</label>
-                                <select name="request_type" id="request_type" class="form-control" required>
+                                <select name="request_type" id="request_type" class="form-control select2" required>
                                     <option value="">Select Type</option>
                                     @foreach ($ticketTypes as $type)
                                         <option value="{{ $type->ticket_type_id }}">{{ $type->ticket_type_id }}
@@ -104,7 +104,7 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label>Urgency Level</label>
-                                <select name="urgency_level" class="form-control" required>
+                                <select name="urgency_level" class="form-control select2" required>
                                     <option value="low">Low</option>
                                     <option value="medium">Medium</option>
                                     <option value="high">High</option>
@@ -354,5 +354,9 @@
                 });
             }
         });
+
+        if ($('.select2').length) {
+            $('.select2').select2({ width: '100%' });
+        }
     </script>
 @endsection
