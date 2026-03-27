@@ -72,6 +72,7 @@ let UserManagement = {
         username: $('#username').val(),
         email: $('#email').val(),
         password: $('#password').val(),
+        role_ids: $('#role_ids').val() || [],
         is_active: $('#is_active').is(':checked') ? 1 : 0
     }),
 

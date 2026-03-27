@@ -31,7 +31,7 @@
                                 </form>
                             @endif
 
-                            @if ($ticket->status == 'WAITING APPROVAL' && session('id') == $ticket->current_approver)
+                            @if ($ticket->status == 'WAITING APPROVAL' && !empty($can_approve_ticket))
                                 <button class="btn btn-sm btn-success"
                                     onclick="Approval.showApproveModal({{ $ticket->id }})">
                                     <i class="bx bx-check"></i> Approve
@@ -132,7 +132,7 @@
             @include('components.attachments')
 
             <!-- Approval action modals -->
-            @if ($ticket->status == 'WAITING APPROVAL' && session('id') == $ticket->current_approver)
+            @if ($ticket->status == 'WAITING APPROVAL' && !empty($can_approve_ticket))
                 <!-- APPROVE MODAL -->
                 <div class="modal fade" id="ticketApproveModal" data-bs-backdrop="static" data-bs-keyboard="false"
                     tabindex="-1" aria-labelledby="ticketApproveLabel" aria-hidden="true">
@@ -330,7 +330,7 @@
         });
     </script>
 
-    @if ($ticket->status == 'WAITING APPROVAL' && session('id') == $ticket->current_approver)
+    @if ($ticket->status == 'WAITING APPROVAL' && !empty($can_approve_ticket))
         <script>
             let Approval = {
                 module: () => 'tickets/approval',

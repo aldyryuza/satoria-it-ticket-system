@@ -64,16 +64,15 @@ class TicketController extends Controller
             abort(403, 'You can only submit draft tickets for approval');
         }
 
-        // Get first approver from approval flow
-        $approverId = \App\Providers\AppServiceProvider::getFirstApprover($ticket->company_id, $ticket->division_id);
-
-        if (!$approverId) {
+        if (!\App\Providers\AppServiceProvider::hasStep($ticket->company_id, $ticket->division_id, 1)) {
             if ($request->ajax()) {
                 return response()->json(['success' => false, 'message' => 'No approval flow found for this company and division'], 400);
             }
             return redirect()->back()->with('error', 'No approval flow found for this company and division');
         }
 
+        // Resolve first step primary user (can be null when role-based approver is used)
+        $approverId = \App\Providers\AppServiceProvider::getFirstApprover($ticket->company_id, $ticket->division_id);
         $ticket->status = 'WAITING APPROVAL';
         $ticket->current_approver = $approverId;
         $ticket->current_step = 1;

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ApprovalFlow;
+use App\Models\ApprovalFlowStep;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class ApprovalFlowController extends Controller
@@ -33,16 +35,46 @@ class ApprovalFlowController extends Controller
 
     public function submit(Request $request)
     {
-        $data = $request->all();
+        $validator = Validator::make($request->all(), [
+            'company_id' => 'required|exists:companies,id',
+            'division_id' => 'required|exists:divisions,id',
+            'flow_name' => 'required|string|max:255',
+            'is_active' => 'required|boolean',
+            'steps' => 'required|array|min:1',
+            'steps.*.step_order' => 'required|integer|min:1',
+            'steps.*.approver_role' => 'required|string|max:255',
+            'steps.*.approver_user_id' => 'nullable|exists:users,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'is_valid' => false,
+                'message' => $validator->errors()->first(),
+            ]);
+        }
+
+        $validated = $validator->validated();
         $result['is_valid'] = false;
         DB::beginTransaction();
         try {
+            $data = $request->all();
             $item = empty($data['id']) ? new ApprovalFlow() : ApprovalFlow::find($data['id']);
-            $item->company_id = $data['company_id'];
-            $item->division_id = $data['division_id'];
-            $item->flow_name = $data['flow_name'];
-            $item->is_active = isset($data['is_active']) && $data['is_active'] ? 1 : 0;
+            $item->company_id = $validated['company_id'];
+            $item->division_id = $validated['division_id'];
+            $item->flow_name = $validated['flow_name'];
+            $item->is_active = (bool) $validated['is_active'];
             $item->save();
+
+            ApprovalFlowStep::where('flow_id', $item->id)->delete();
+            foreach ($validated['steps'] as $step) {
+                ApprovalFlowStep::create([
+                    'flow_id' => $item->id,
+                    'step_order' => $step['step_order'],
+                    'approver_role' => $step['approver_role'],
+                    'approver_user_id' => $step['approver_user_id'] ?? null,
+                ]);
+            }
+
             DB::commit();
             $result['is_valid'] = true;
         } catch (\Throwable $th) {

@@ -9,6 +9,7 @@
             <div class="card-body border-top">
                 <div class="row">
                     <input type="hidden" id="id" value="{{ $data['id'] ?? '' }}" />
+                    <input type="hidden" id="form_action" value="{{ $data_page['action'] }}" />
                     <div class="col-sm-12 col-md-4 mb-3">
                         <label for="company_id" class="form-label">Company</label>
                         <select id="company_id" class="form-control required" error="Company">
@@ -43,6 +44,68 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="row mt-2">
+                    <div class="col-12 d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label mb-0">Approval Steps</label>
+                        @if ($data_page['action'] != 'detail')
+                            <button type="button" class="btn btn-sm btn-primary" onclick="ApprovalFlow.addStepRow()">Add
+                                Step</button>
+                        @endif
+                    </div>
+                    <div class="col-12 table-responsive">
+                        <table class="table table-bordered" id="steps-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 120px;">Step Order</th>
+                                    <th>Approver Role</th>
+                                    <th>Approver User</th>
+                                    @if ($data_page['action'] != 'detail')
+                                        <th style="width: 80px;">Action</th>
+                                    @endif
+                                </tr>
+                            </thead>
+                            <tbody id="steps-body">
+                                @forelse ($steps as $step)
+                                    <tr class="step-row">
+                                        <td>
+                                            <input type="number" class="form-control step-order"
+                                                value="{{ $step->step_order }}" {{ $data_page['action'] == 'detail' ? 'disabled' : '' }}>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control step-approver-role"
+                                                value="{{ $step->approver_role }}" {{ $data_page['action'] == 'detail' ? 'disabled' : '' }}>
+                                        </td>
+                                        <td>
+                                            <select class="form-control step-approver-user {{ $data_page['action'] == 'detail' ? '' : 'select2' }}"
+                                                {{ $data_page['action'] == 'detail' ? 'disabled' : '' }}>
+                                                <option value="">Pilih User (opsional)</option>
+                                                @foreach ($users as $user)
+                                                    <option value="{{ $user->id }}"
+                                                        {{ (int) $step->approver_user_id === (int) $user->id ? 'selected' : '' }}>
+                                                        {{ $user->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        @if ($data_page['action'] != 'detail')
+                                            <td class="text-center">
+                                                <button type="button" class="btn btn-sm btn-danger"
+                                                    onclick="ApprovalFlow.removeStepRow(this)">x</button>
+                                            </td>
+                                        @endif
+                                    </tr>
+                                @empty
+                                    @if ($data_page['action'] == 'detail')
+                                        <tr>
+                                            <td colspan="4" class="text-center">No steps configured</td>
+                                        </tr>
+                                    @endif
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="p-3 border-top text-end">
                 @if ($data_page['action'] != 'detail')
@@ -57,3 +120,6 @@
 @else
 @include('errors.no_akes')
 @endcanAccess
+<script>
+    window.approvalFlowUsers = @json($users->map(fn($user) => ['id' => $user->id, 'name' => $user->name])->values());
+</script>

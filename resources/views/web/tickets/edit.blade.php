@@ -66,7 +66,7 @@
                                     <input type="text" class="form-control" value="{{ session('company_name') }}"
                                         readonly style="background-color:#e9ecef; cursor:not-allowed;">
                                 @else
-                                    <select name="company_id" class="form-control" required>
+                                    <select name="company_id" class="form-control select2" required>
                                         <option value="">Select Company</option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->id }}"
@@ -87,7 +87,7 @@
                                     <input type="text" class="form-control" value="{{ session('division_name') }}"
                                         readonly style="background-color:#e9ecef; cursor:not-allowed;">
                                 @else
-                                    <select name="division_id" class="form-control" required>
+                                    <select name="division_id" class="form-control select2" required>
                                         <option value="">Select Division</option>
                                         @foreach ($divisions as $division)
                                             <option value="{{ $division->id }}"
@@ -116,7 +116,7 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label>Request Type</label>
-                                <select name="request_type" id="request_type" class="form-control" required>
+                                <select name="request_type" id="request_type" class="form-control select2" required>
                                     <option value="">Select Type</option>
                                     @foreach ($ticketTypes as $type)
                                         <option value="{{ $type->ticket_type_id }}"
@@ -129,7 +129,7 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label>Urgency Level</label>
-                                <select name="urgency_level" class="form-control" required>
+                                <select name="urgency_level" class="form-control select2" required>
                                     <option value="low" @if ($ticket->urgency_level == 'low') selected @endif>Low
                                     </option>
                                     <option value="medium" @if ($ticket->urgency_level == 'medium') selected @endif>Medium
@@ -175,6 +175,11 @@
                     </div>
 
                     <div class="form-group mb-3">
+                        <label>Existing Attachments</label>
+                        <div id="existingFileList" class="mt-2"></div>
+                    </div>
+
+                    <div class="form-group mb-3">
                         <button type="submit" class="btn btn-primary">Update Ticket</button>
                         <a href="{{ route('tickets.show', $ticket->id) }}" class="btn btn-secondary">Cancel</a>
                     </div>
@@ -184,12 +189,14 @@
     </div>
 </div>
 
+@section('scripts')
 <script>
     $(document).ready(function() {
         let selectedFiles = [];
         const maxFileSize = 10 * 1024 * 1024; // 10MB
         const allowedTypes = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'jpg', 'jpeg', 'png', 'gif'];
         const ticketId = {{ $ticket->id }};
+        loadExistingAttachments();
 
         // Load dynamic fields
         var requestType = $('#request_type').val();
@@ -211,7 +218,7 @@
                 url: '/api/ticket-fields/' + type,
                 type: 'GET',
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+                    'Authorization': 'Bearer ' + Token.get()
                 },
                 success: function(response) {
                     $('#dynamic_fields').html(response);
@@ -289,6 +296,7 @@
                 selectedFiles.push(file);
                 displayFile(file);
             }
+            $('#fileInput').val('');
         }
 
         function displayFile(file) {
@@ -312,16 +320,16 @@
         `;
 
             $('#fileList').append(fileHtml);
+            $(`[data-file-id="${fileId}"]`).attr('data-file-name', file.name).attr('data-file-size', file.size);
         }
 
         // Remove file
         $(document).on('click', '.remove-file', function() {
-            const fileId = $(this).data('file-id');
-            selectedFiles = selectedFiles.filter(file => {
-                const itemFileId = $(this).closest('.file-item').data('file-id');
-                return itemFileId !== fileId;
-            });
-            $(this).closest('.file-item').remove();
+            const fileItem = $(this).closest('.file-item');
+            const fileName = fileItem.data('file-name');
+            const fileSize = fileItem.data('file-size');
+            selectedFiles = selectedFiles.filter(file => !(file.name === fileName && file.size === fileSize));
+            fileItem.remove();
         });
 
         function formatFileSize(bytes) {
@@ -339,6 +347,117 @@
             if (mimeType.includes('image')) return 'bx bx-image';
             return 'bx bx-file';
         }
+
+        function loadExistingAttachments() {
+            $.ajax({
+                url: `/api/tickets/${ticketId}/attachments`,
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + Token.get()
+                },
+                success: function(response) {
+                    if (response.success && response.data.length > 0) {
+                        renderExistingAttachments(response.data);
+                    } else {
+                        $('#existingFileList').html('<p class="text-muted mb-0">No attachments</p>');
+                    }
+                },
+                error: function() {
+                    $('#existingFileList').html('<p class="text-danger mb-0">Failed to load attachments</p>');
+                }
+            });
+        }
+
+        function renderExistingAttachments(attachments) {
+            let html = '';
+            attachments.forEach(function(attachment) {
+                const fileIcon = getFileIcon(attachment.mime_type || '');
+                const fileSize = formatFileSize(attachment.file_size || 0);
+
+                html += `
+                    <div class="d-flex align-items-center justify-content-between p-2 border rounded mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="${fileIcon} me-2 text-primary"></i>
+                            <div>
+                                <small class="fw-bold">${attachment.file_name}</small><br>
+                                <small class="text-muted">${fileSize}</small>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-outline-primary btn-download-existing me-1" data-id="${attachment.id}">
+                                <i class="bx bx-download"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete-existing" data-id="${attachment.id}">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            $('#existingFileList').html(html);
+        }
+
+        $(document).on('click', '.btn-delete-existing', function() {
+            const attachmentId = $(this).data('id');
+            if (!confirm('Delete this attachment?')) return;
+
+            $.ajax({
+                url: `/api/attachments/${attachmentId}`,
+                type: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + Token.get()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        message.sweetSuccess('Attachment deleted');
+                        loadExistingAttachments();
+                    } else {
+                        message.sweetError(response.message || 'Failed to delete attachment');
+                    }
+                },
+                error: function() {
+                    message.sweetError('Failed to delete attachment');
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-download-existing', function() {
+            const attachmentId = $(this).data('id');
+
+            $.ajax({
+                url: `/api/attachments/${attachmentId}/download`,
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + Token.get()
+                },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function(data, status, xhr) {
+                    let filename = '';
+                    const disposition = xhr.getResponseHeader('Content-Disposition');
+                    if (disposition && disposition.indexOf('attachment') !== -1) {
+                        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        const matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1]) {
+                            filename = matches[1].replace(/['"]/g, '');
+                        }
+                    }
+                    if (!filename) filename = 'attachment_' + attachmentId;
+
+                    const blob = new Blob([data]);
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+                error: function() {
+                    message.sweetError('Failed to download attachment');
+                }
+            });
+        });
 
         // Modify form submission to include files
         $('form').on('submit', function(e) {
@@ -418,8 +537,12 @@
                 });
             });
         }
+        if ($('.select2').length) {
+            $('.select2').select2({ width: '100%' });
+        }
     });
 </script>
+@endsection
 @else
 @include('errors.no_akes')
 @endcanAccess

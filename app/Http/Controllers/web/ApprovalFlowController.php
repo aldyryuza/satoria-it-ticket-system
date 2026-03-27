@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ApprovalFlow;
 use App\Models\Company;
 use App\Models\Division;
+use App\Models\User;
 
 class ApprovalFlowController extends Controller
 {
@@ -38,6 +39,8 @@ class ApprovalFlowController extends Controller
         $data['data'] = [];
         $data['companies'] = Company::all();
         $data['divisions'] = Division::all();
+        $data['users'] = User::all();
+        $data['steps'] = [];
         $data['data_page'] = ['title' => 'Approval Flow Create', 'action' => 'add'];
         $view = view('web.approval_flow.form.form', $data);
         $put['title_content'] = 'Approval Flow';
@@ -50,9 +53,11 @@ class ApprovalFlowController extends Controller
 
     public function edit($id)
     {
-        $data['data'] = ApprovalFlow::find($id);
+        $data['data'] = ApprovalFlow::with('steps')->find($id);
         $data['companies'] = Company::all();
         $data['divisions'] = Division::all();
+        $data['users'] = User::all();
+        $data['steps'] = $data['data'] ? $data['data']->steps->sortBy('step_order')->values() : collect();
         $data['data_page'] = ['title' => 'Approval Flow Edit', 'action' => 'edit'];
         $view = view('web.approval_flow.form.form', $data);
         $put['title_content'] = 'Approval Flow';
@@ -65,9 +70,11 @@ class ApprovalFlowController extends Controller
 
     public function detail($id)
     {
-        $data['data'] = ApprovalFlow::find($id);
+        $data['data'] = ApprovalFlow::with('steps')->find($id);
         $data['companies'] = Company::all();
         $data['divisions'] = Division::all();
+        $data['users'] = User::all();
+        $data['steps'] = $data['data'] ? $data['data']->steps->sortBy('step_order')->values() : collect();
         $data['data_page'] = ['title' => 'Approval Flow Detail', 'action' => 'detail'];
         $view = view('web.approval_flow.form.form', $data);
         $put['title_content'] = 'Approval Flow';

@@ -38,6 +38,19 @@
                     <div class="col-md-6 mb-3"><label>Password</label><input id="password" type="password"
                             class="form-control" placeholder="Kosongkan jika tidak diubah" /></div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label>Roles</label>
+                        <select id="role_ids" class="form-control select2 required" error="Roles" multiple>
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->id }}"
+                                    {{ in_array($role->id, $selectedRoleIds ?? []) ? 'selected' : '' }}>
+                                    {{ $role->role_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
                 <div class="form-check"><input id="is_active" class="form-check-input" type="checkbox"
                         {{ isset($data->is_active) && $data->is_active ? 'checked' : '' }}><label class="form-check-label"
                         for="is_active">Active</label></div>

@@ -135,10 +135,12 @@ class TicketController extends Controller
     public function show($id)
     {
         $ticket = TicketRequest::findOrFail($id);
+        $canApproveTicket = \App\Providers\AppServiceProvider::canUserApproveStep($ticket, Auth::user());
         // Check if user is requester, admin, or assigned worker
         $isAuthorized = session('id') == $ticket->requester_id ||
             session('id') == $ticket->assigned_to ||
             session('id') == $ticket->current_approver ||
+            $canApproveTicket ||
             // Auth::user()->hasRole(['IT Admin', 'Admin'])
             in_array(session('role_name'), ['super_admin', 'it_admin', 'it_worker']);
 
@@ -150,6 +152,7 @@ class TicketController extends Controller
         $data['data_page'] = [
             'title' => 'Ticket Details - ' . $ticket->ticket_number,
         ];
+        $data['can_approve_ticket'] = $canApproveTicket;
         $data['fields'] = TicketField::where('ticket_id', $id)->get();
         $view = view('web.tickets.show', $data);
         $put['title_content'] = $ticket->ticket_number;
@@ -272,9 +275,7 @@ class TicketController extends Controller
         }
 
         // Get first approver from approval flow
-        $approverId = \App\Providers\AppServiceProvider::getFirstApprover($ticket->company_id, $ticket->division_id);
-
-        if (!$approverId) {
+        if (!\App\Providers\AppServiceProvider::hasStep($ticket->company_id, $ticket->division_id, 1)) {
             if ($request->ajax()) {
                 return response()->json(['success' => false, 'message' => 'No approval flow found for this company and division'], 400);
             }
@@ -282,6 +283,7 @@ class TicketController extends Controller
         }
 
         $oldStatus = $ticket->status;
+        $approverId = \App\Providers\AppServiceProvider::getFirstApprover($ticket->company_id, $ticket->division_id);
         $ticket->status = 'WAITING APPROVAL';
         $ticket->current_approver = $approverId;
         $ticket->current_step = 1;
@@ -314,6 +316,7 @@ class TicketController extends Controller
             ->whereMonth('created_at', $month)
             ->orderBy('id', 'desc')
             ->first();
+
         $running = $lastTicket ? intval(substr($lastTicket->ticket_number, -4)) + 1 : 1;
         return 'TCK-' . $company->company_code . '-' . $month . '-' . $year . '-' . str_pad($running, 4, '0', STR_PAD_LEFT);
     }

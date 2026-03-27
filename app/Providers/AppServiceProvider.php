@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Blade;
 use App\Models\ApprovalFlow;
+use App\Models\TicketRequest;
+use App\Models\User;
 use App\Services\MenuService;
 
 class AppServiceProvider extends ServiceProvider
@@ -74,17 +76,94 @@ class AppServiceProvider extends ServiceProvider
 
     public static function getFirstApprover($companyId, $divisionId)
     {
-        $flow = ApprovalFlow::where('company_id', $companyId)
-            ->where('division_id', $divisionId)
-            ->where('is_active', true)
+        return self::getStepPrimaryApprover($companyId, $divisionId, 1);
+    }
+
+    public static function hasStep($companyId, $divisionId, $stepOrder)
+    {
+        $flow = self::getFlow($companyId, $divisionId);
+        if (!$flow) {
+            return false;
+        }
+
+        return $flow->steps()->where('step_order', $stepOrder)->exists();
+    }
+
+    public static function getStepPrimaryApprover($companyId, $divisionId, $stepOrder)
+    {
+        $flow = self::getFlow($companyId, $divisionId);
+        if (!$flow) {
+            return null;
+        }
+
+        $step = $flow->steps()
+            ->where('step_order', $stepOrder)
+            ->orderBy('id')
             ->first();
-        if ($flow) {
-            $step = $flow->steps()->orderBy('step_order')->first();
-            if ($step) {
-                return $step->approver_user_id;
+
+        return $step ? $step->approver_user_id : null;
+    }
+
+    public static function getNextStepOrder($companyId, $divisionId, $currentStep)
+    {
+        $flow = self::getFlow($companyId, $divisionId);
+        if (!$flow) {
+            return null;
+        }
+
+        $next = $flow->steps()
+            ->where('step_order', '>', $currentStep)
+            ->orderBy('step_order')
+            ->first();
+
+        return $next ? (int) $next->step_order : null;
+    }
+
+    public static function canUserApproveStep(TicketRequest $ticket, ?User $user)
+    {
+        if (!$user || $ticket->status !== 'WAITING APPROVAL') {
+            return false;
+        }
+
+        $flow = self::getFlow($ticket->company_id, $ticket->division_id);
+        if (!$flow) {
+            return false;
+        }
+
+        $steps = $flow->steps()->where('step_order', $ticket->current_step)->get();
+        if ($steps->isEmpty()) {
+            return false;
+        }
+
+        $userRoleNames = $user->roles()
+            ->pluck('role_name')
+            ->map(function ($roleName) {
+                return strtolower(trim($roleName));
+            })
+            ->toArray();
+        // dd($steps, $userRoleNames);
+        foreach ($steps as $step) {
+            if (!empty($step->approver_user_id) && (int) $step->approver_user_id === (int) $user->id) {
+                return true;
+            }
+
+            if (empty($step->approver_user_id)) {
+                $stepRole = strtolower(trim((string) $step->approver_role));
+                $isSameCompany = (int) $user->company_id === (int) $ticket->company_id;
+                if ($isSameCompany && in_array($stepRole, $userRoleNames, true)) {
+                    return true;
+                }
             }
         }
 
-        return null;
+        return false;
+    }
+
+    private static function getFlow($companyId, $divisionId)
+    {
+        return ApprovalFlow::where('company_id', $companyId)
+            ->where('division_id', $divisionId)
+            ->where('is_active', true)
+            ->first();
     }
 }

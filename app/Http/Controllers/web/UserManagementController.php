@@ -5,6 +5,7 @@ namespace App\Http\Controllers\web;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Division;
+use App\Models\Role;
 use App\Models\User;
 
 class UserManagementController extends Controller
@@ -32,6 +33,8 @@ class UserManagementController extends Controller
         $data['data'] = [];
         $data['companies'] = Company::all();
         $data['divisions'] = Division::all();
+        $data['roles'] = Role::all();
+        $data['selectedRoleIds'] = [];
         $data['data_page'] = ['title' => 'User Add', 'action' => 'add'];
         $view = view('web.user_management.form.form', $data);
         $put['title_content'] = 'Users';
@@ -44,9 +47,11 @@ class UserManagementController extends Controller
 
     public function edit($id)
     {
-        $data['data'] = User::find($id);
+        $data['data'] = User::with('roles')->find($id);
         $data['companies'] = Company::all();
         $data['divisions'] = Division::all();
+        $data['roles'] = Role::all();
+        $data['selectedRoleIds'] = $data['data'] ? $data['data']->roles->pluck('id')->toArray() : [];
         $data['data_page'] = ['title' => 'User Edit', 'action' => 'edit'];
         $view = view('web.user_management.form.form', $data);
         $put['title_content'] = 'Users';
@@ -59,9 +64,11 @@ class UserManagementController extends Controller
 
     public function detail($id)
     {
-        $data['data'] = User::find($id);
+        $data['data'] = User::with('roles')->find($id);
         $data['companies'] = Company::all();
         $data['divisions'] = Division::all();
+        $data['roles'] = Role::all();
+        $data['selectedRoleIds'] = $data['data'] ? $data['data']->roles->pluck('id')->toArray() : [];
         $data['data_page'] = ['title' => 'User Detail', 'action' => 'detail'];
         $view = view('web.user_management.form.form', $data);
         $put['title_content'] = 'Users';

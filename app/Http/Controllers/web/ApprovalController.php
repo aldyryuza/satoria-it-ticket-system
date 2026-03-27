@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\web;
 
 use App\Http\Controllers\Controller;
-use App\Models\ApprovalFlowStep;
 use App\Models\TicketApproval;
 use App\Models\TicketHistory;
 use App\Models\TicketRequest;
+use App\Providers\AppServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -58,8 +58,8 @@ class ApprovalController extends Controller
         try {
             $ticket = TicketRequest::findOrFail($id);
 
-            // Authorization check
-            if (session('id') != $ticket->current_approver) {
+            // Authorization check (supports direct user approver, role+company approver, and multi approvers in same step)
+            if (!AppServiceProvider::canUserApproveStep($ticket, Auth::user())) {
                 return back()->with('error', 'You are not authorized to approve this ticket');
             }
 
@@ -73,21 +73,24 @@ class ApprovalController extends Controller
                 'approved_at' => now(),
             ]);
 
-            // Get next step
-            $nextStep = ApprovalFlowStep::whereHas('flow', function ($q) use ($ticket) {
-                $q->where('company_id', $ticket->company_id)
-                    ->where('division_id', $ticket->division_id)
-                    ->where('is_active', true);
-            })
-                ->where('step_order', $ticket->current_step + 1)
-                ->first();
+            // Get next step order (step can have multiple approvers)
+            $nextStepOrder = AppServiceProvider::getNextStepOrder(
+                $ticket->company_id,
+                $ticket->division_id,
+                $ticket->current_step
+            );
 
-            if ($nextStep) {
+            if ($nextStepOrder !== null) {
                 $oldStep = $ticket->current_step;
+                $nextApproverId = AppServiceProvider::getStepPrimaryApprover(
+                    $ticket->company_id,
+                    $ticket->division_id,
+                    $nextStepOrder
+                );
 
                 $ticket->update([
-                    'current_step'     => $ticket->current_step + 1,
-                    'current_approver' => $nextStep->approver_user_id,
+                    'current_step'     => $nextStepOrder,
+                    'current_approver' => $nextApproverId,
                 ]);
 
                 // Log approval step forwarding
@@ -143,8 +146,8 @@ class ApprovalController extends Controller
         try {
             $ticket = TicketRequest::findOrFail($id);
 
-            // Authorization check
-            if (session('id') != $ticket->current_approver) {
+            // Authorization check (supports direct user approver, role+company approver, and multi approvers in same step)
+            if (!AppServiceProvider::canUserApproveStep($ticket, Auth::user())) {
                 return back()->with('error', 'You are not authorized to reject this ticket');
             }
 

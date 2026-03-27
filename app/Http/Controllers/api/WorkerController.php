@@ -22,11 +22,16 @@ class WorkerController extends Controller
             'id',
             'ticket_number',
             'title',
+            'request_type',
             'status',
             'requester_id',
             'urgency_level',
             'created_at'
         ])->with('requester')->where('assigned_to', Auth::id())->orderBy('id', 'desc');
+
+        if ($request->filled('status_filter')) {
+            $query->where('status', $request->status_filter);
+        }
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -56,6 +61,7 @@ class WorkerController extends Controller
             'id',
             'ticket_number',
             'title',
+            'request_type',
             'status',
             'requester_id',
             'urgency_level',

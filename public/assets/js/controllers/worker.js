@@ -15,6 +15,9 @@ var Worker = {
                 ajax: {
                     url: '/api/worker/tickets/my-tickets/getData',
                     type: 'POST',
+                    data: function (d) {
+                        d.status_filter = $('#status-filter').val();
+                    },
                     headers: {
                         'Authorization': 'Bearer ' + Token.get()
                     }
@@ -22,6 +25,7 @@ var Worker = {
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'ticket_number', name: 'ticket_number' },
+                    { data: 'request_type', name: 'request_type' },
                     { data: 'title', name: 'title' },
                     { data: 'status', name: 'status' },
                     { data: 'requester_id', name: 'requester_id' },
@@ -42,6 +46,7 @@ var Worker = {
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'ticket_number', name: 'ticket_number' },
+                    { data: 'request_type', name: 'request_type' },
                     { data: 'title', name: 'title' },
                     { data: 'status', name: 'status' },
                     { data: 'requester_id', name: 'requester_id' },
@@ -101,6 +106,13 @@ var Worker = {
         $(document).on('submit', '#progressForm', function (e) {
             e.preventDefault();
             self.submitProgress();
+        });
+
+        // Filter by status
+        $(document).on('change', '#status-filter', function () {
+            if (self.table) {
+                self.table.ajax.reload();
+            }
         });
     },
 

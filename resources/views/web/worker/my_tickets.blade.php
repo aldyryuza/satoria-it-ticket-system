@@ -8,6 +8,19 @@
                     Your assigned tickets.
                 </p>
 
+                <div class="row mt-3">
+                    <div class="col-md-4 col-lg-3">
+                        <label for="status-filter" class="form-label">Filter Status</label>
+                        <select id="status-filter" class="form-select">
+                            <option value="">All Status</option>
+                            <option value="ASSIGNED">Assigned</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="done">Done</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+
                 @canAccess('my_tickets','update')
                 <input type="hidden" name="update" id="update" value="1">
                 @endcanAccess
@@ -23,6 +36,7 @@
                                 <tr>
                                     <th class="text-upper">no</th>
                                     <th class="text-upper">ticket_number</th>
+                                    <th class="text-upper">request_type</th>
                                     <th class="text-upper">title</th>
                                     <th class="text-upper">status</th>
                                     <th class="text-upper">PIC</th>
@@ -66,7 +80,8 @@
 
                     <div class="mb-3">
                         <label class="form-label">Percent Progress</label>
-                        <input type="number" name="percent_progress" class="form-control" min="0" max="100" required>
+                        <input type="number" name="percent_progress" class="form-control" min="0" max="100"
+                            required>
                     </div>
 
                     <div class="mb-3">
@@ -78,7 +93,8 @@
 
                 <!-- FOOTER -->
                 <div class="modal-footer">
-                    <button type="button" class="btn bg-danger-subtle text-danger waves-effect" data-bs-dismiss="modal">
+                    <button type="button" class="btn bg-danger-subtle text-danger waves-effect"
+                        data-bs-dismiss="modal">
                         Close
                     </button>
 

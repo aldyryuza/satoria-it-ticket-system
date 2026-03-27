@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserManagementController extends Controller
@@ -34,21 +35,42 @@ class UserManagementController extends Controller
 
     public function submit(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'company_id' => 'required|exists:companies,id',
+            'division_id' => 'required|exists:divisions,id',
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'password' => 'nullable|string|min:6',
+            'is_active' => 'required|boolean',
+            'role_ids' => 'required|array|min:1',
+            'role_ids.*' => 'exists:roles,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'is_valid' => false,
+                'message' => $validator->errors()->first()
+            ]);
+        }
+
+        $validated = $validator->validated();
         $data = $request->all();
         $result['is_valid'] = false;
         DB::beginTransaction();
         try {
             $user = $data['id'] ? User::find($data['id']) : new User();
-            $user->company_id = $data['company_id'];
-            $user->division_id = $data['division_id'];
-            $user->name = $data['name'];
-            $user->username = $data['username'];
-            $user->email = $data['email'];
+            $user->company_id = $validated['company_id'];
+            $user->division_id = $validated['division_id'];
+            $user->name = $validated['name'];
+            $user->username = $validated['username'];
+            $user->email = $validated['email'];
             if ($data['password']) {
                 $user->password = Hash::make($data['password']);
             }
-            $user->is_active = (bool) $data['is_active'];
+            $user->is_active = (bool) $validated['is_active'];
             $user->save();
+            $user->roles()->sync($validated['role_ids']);
             DB::commit();
             $result['is_valid'] = true;
         } catch (\Throwable $th) {

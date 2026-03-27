@@ -195,9 +195,6 @@ var Attachment = {
                 '<button class="btn btn-sm btn-primary btn-download-attachment" data-id="' + attachment.id + '" title="Download">' +
                 '<i class="bx bx-download"></i>' +
                 '</button>' +
-                '<button class="btn btn-sm btn-danger btn-delete-attachment" data-id="' + attachment.id + '" title="Delete">' +
-                '<i class="bx bx-trash"></i>' +
-                '</button>' +
                 '</div>' +
                 '</div>';
         });
@@ -208,7 +205,7 @@ var Attachment = {
     getFileIcon: function (mimeType) {
         if (!mimeType) return 'bx bx-file';
 
-        if (mimeType.includes('pdf')) return 'bx bx-file-pdf';
+        if (mimeType.includes('pdf')) return 'bx bx-file-blank';
         if (mimeType.includes('image')) return 'bx bx-image';
         if (mimeType.includes('word') || mimeType.includes('document')) return 'bx bx-file-blank';
         if (mimeType.includes('sheet') || mimeType.includes('spreadsheet')) return 'bx bx-spreadsheet';

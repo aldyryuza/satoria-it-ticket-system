@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\TicketRequest;
+use App\Providers\AppServiceProvider;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,16 +19,27 @@ class ApprovalController extends Controller
 
     public function getData(Request $request)
     {
+        $user = Auth::user();
+
         $query = TicketRequest::select([
             'id',
             'ticket_number',
             'title',
             'requester_id',
             'urgency_level',
-            'created_at'
-        ])->with('requester')->where('current_approver', Auth::id())->where('status', 'WAITING APPROVAL')->orderBy('id', 'desc');
+            'created_at',
+            'status',
+            'company_id',
+            'division_id',
+            'current_step',
+            'current_approver'
+        ])->with('requester')->where('status', 'WAITING APPROVAL')->orderBy('id', 'desc');
 
-        return DataTables::of($query)
+        $records = $query->get()->filter(function ($ticket) use ($user) {
+            return AppServiceProvider::canUserApproveStep($ticket, $user);
+        })->values();
+
+        return DataTables::of($records)
             ->addIndexColumn()
             ->editColumn('created_at', function ($row) {
                 return Carbon::parse($row->created_at)->format('d/m/Y H:i');

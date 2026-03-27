@@ -1,0 +1,8 @@
+approver
+- jika mau multi user ketika approve, misal :
+	- approver 1 nya ada 2 = {user a dan b} bisa a /b, itu harus ada usernya. kemudian
+	- approver 2 nya kalau mau general siapapun itu asal PT dan rolenya sama, tanpa perlu user
+berlaku untuk approver lainya
+
+=====
+
