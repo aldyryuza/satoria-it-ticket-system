@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\TicketHistory;
 use App\Models\TicketRequest;
 use Carbon\Carbon;
-use Illuminate\Container\Attributes\Auth;
+use Illuminate\Support\Facades\Auth;
 
 class TicketHistoryController extends Controller
 {
@@ -19,7 +19,6 @@ class TicketHistoryController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         $formatted = $histories->map(function ($history) {
-            // dd($history->user ? $history->user->name : 'System');
             return [
                 'id' => $history->id,
                 'action' => $history->action,
@@ -27,6 +26,10 @@ class TicketHistoryController extends Controller
                 'old_value' => $history->old_value,
                 'new_value' => $history->new_value,
                 'user' => $history->user ? $history->user->name : 'System',
+                // ISO 8601 for reliable JavaScript parsing (moment / Date)
+                'created_at' => $history->created_at
+                    ? $history->created_at->toIso8601String()
+                    : null,
                 'timestamp' => Carbon::parse($history->created_at)->format('d/m/Y H:i:s')
             ];
         });

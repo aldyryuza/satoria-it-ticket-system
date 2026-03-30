@@ -73,8 +73,22 @@
                                                 value="{{ $step->step_order }}" {{ $data_page['action'] == 'detail' ? 'disabled' : '' }}>
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control step-approver-role"
-                                                value="{{ $step->approver_role }}" {{ $data_page['action'] == 'detail' ? 'disabled' : '' }}>
+                                            @php
+                                                $savedRole = trim((string) ($step->approver_role ?? ''));
+                                                $roleInList = $roles->contains(fn ($r) => strcasecmp($r->role_name, $savedRole) === 0);
+                                            @endphp
+                                            <select class="form-control step-approver-role"
+                                                {{ $data_page['action'] == 'detail' ? 'disabled' : '' }}>
+                                                <option value="">Pilih Role</option>
+                                                @if ($savedRole !== '' && !$roleInList)
+                                                    <option value="{{ $savedRole }}" selected>{{ $savedRole }}</option>
+                                                @endif
+                                                @foreach ($roles as $role)
+                                                    <option value="{{ $role->role_name }}"
+                                                        {{ strcasecmp($role->role_name, $savedRole) === 0 ? 'selected' : '' }}>
+                                                        {{ $role->role_name }}</option>
+                                                @endforeach
+                                            </select>
                                         </td>
                                         <td>
                                             <select class="form-control step-approver-user {{ $data_page['action'] == 'detail' ? '' : 'select2' }}"
@@ -122,4 +136,5 @@
 @endcanAccess
 <script>
     window.approvalFlowUsers = @json($users->map(fn($user) => ['id' => $user->id, 'name' => $user->name])->values());
+    window.approvalFlowRoles = @json($roles->map(fn($role) => ['role_name' => $role->role_name])->values());
 </script>

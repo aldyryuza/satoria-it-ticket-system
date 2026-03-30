@@ -53,7 +53,7 @@ let ApprovalFlow = {
         $('#steps-body .step-row').each(function () {
             steps.push({
                 step_order: $(this).find('.step-order').val(),
-                approver_role: $(this).find('.step-approver-role').val(),
+                approver_role: $(this).find('.step-approver-role').val() || '',
                 approver_user_id: $(this).find('.step-approver-user').val(),
             });
         });
@@ -69,7 +69,12 @@ let ApprovalFlow = {
         const row = `
             <tr class="step-row">
                 <td><input type="number" class="form-control step-order"></td>
-                <td><input type="text" class="form-control step-approver-role"></td>
+                <td>
+                    <select class="form-control step-approver-role">
+                        <option value="">Pilih Role</option>
+                        ${ApprovalFlow.getRoleOptionsHtml()}
+                    </select>
+                </td>
                 <td>
                     <select class="form-control step-approver-user select2">
                         <option value="">Pilih User (opsional)</option>
@@ -90,6 +95,15 @@ let ApprovalFlow = {
     getUserOptionsHtml: () => {
         const users = window.approvalFlowUsers || [];
         return users.map((user) => `<option value="${user.id}">${user.name}</option>`).join('');
+    },
+
+    getRoleOptionsHtml: () => {
+        const roles = window.approvalFlowRoles || [];
+        const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+        return roles.map((r) => {
+            const label = r.role_name || '';
+            return `<option value="${esc(label)}">${esc(label)}</option>`;
+        }).join('');
     },
 
     submit: () => {

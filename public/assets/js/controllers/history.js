@@ -42,6 +42,18 @@ var TicketHistory = {
             <tbody>
     `;
 
+        function formatHistoryDate(it) {
+            if (it.created_at) {
+                var m = moment(it.created_at);
+                return m.isValid() ? m.format('DD MMM YYYY HH:mm') : (it.timestamp || '-');
+            }
+            if (it.timestamp) {
+                var m2 = moment(it.timestamp, 'DD/MM/YYYY HH:mm:ss', true);
+                return m2.isValid() ? m2.format('DD MMM YYYY HH:mm') : it.timestamp;
+            }
+            return '-';
+        }
+
         data.forEach(function (item) {
 
             let badge = '';
@@ -76,7 +88,7 @@ var TicketHistory = {
 
             html += `
             <tr>
-                <td>${moment(item.created_at).format('DD MMM YYYY HH:mm')}</td>
+                <td>${formatHistoryDate(item)}</td>
                 <td>${badge}</td>
                 <td>
                     ${item.description ?? '-'}

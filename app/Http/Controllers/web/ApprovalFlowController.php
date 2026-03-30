@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ApprovalFlow;
 use App\Models\Company;
 use App\Models\Division;
+use App\Models\Role;
 use App\Models\User;
 
 class ApprovalFlowController extends Controller
@@ -40,6 +41,7 @@ class ApprovalFlowController extends Controller
         $data['companies'] = Company::all();
         $data['divisions'] = Division::all();
         $data['users'] = User::all();
+        $data['roles'] = Role::orderBy('role_name')->get();
         $data['steps'] = [];
         $data['data_page'] = ['title' => 'Approval Flow Create', 'action' => 'add'];
         $view = view('web.approval_flow.form.form', $data);
@@ -57,6 +59,7 @@ class ApprovalFlowController extends Controller
         $data['companies'] = Company::all();
         $data['divisions'] = Division::all();
         $data['users'] = User::all();
+        $data['roles'] = Role::orderBy('role_name')->get();
         $data['steps'] = $data['data'] ? $data['data']->steps->sortBy('step_order')->values() : collect();
         $data['data_page'] = ['title' => 'Approval Flow Edit', 'action' => 'edit'];
         $view = view('web.approval_flow.form.form', $data);
@@ -74,6 +77,7 @@ class ApprovalFlowController extends Controller
         $data['companies'] = Company::all();
         $data['divisions'] = Division::all();
         $data['users'] = User::all();
+        $data['roles'] = Role::orderBy('role_name')->get();
         $data['steps'] = $data['data'] ? $data['data']->steps->sortBy('step_order')->values() : collect();
         $data['data_page'] = ['title' => 'Approval Flow Detail', 'action' => 'detail'];
         $view = view('web.approval_flow.form.form', $data);
