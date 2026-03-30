@@ -6,3 +6,15 @@ berlaku untuk approver lainya
 
 =====
 
+flow create ticket :
+- requester create
+- masih bisa diedit sebelum disbumit for approval, statusnya masih DRAFT
+- setelah di submit tidak bisa diedit, dan statusnya jadi WAITING FOR APPOROVAL
+- flow urutuan approvalnya sesuai settingan approval pt dan divisi
+- setelah approver sudah approve semua, maka statusnya jadi APPROVED
+- lalu admin IT bisa mulai mendelegasikan ticket tersebut ke worker beserta Plan Due Date dan notenya, ketika statusnya masih assign admin IT bisa gonta ganti workernya.
+- lalu worker bisa lihat ticketnya dan bisa start / memulai mengerjakan ticketnya dan statusnya akan jadi "in_progress"
+- kemudian worker bisa update progressnya , yang diisi percent progressnya dan progress notenya
+- setelah pekerjaan dikira sudah seelsai, worker bisa update statusnya jadi "done" dan akan terisi juga Done at otomatis
+- kemudian admin IT bisa close ticket yang sudah done, dan statusnya otomatis jadi "Closed" dan "Closed at" juga akan otomatis terisi
+- selesai
